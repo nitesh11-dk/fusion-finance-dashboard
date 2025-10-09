@@ -13,12 +13,12 @@ export default function HomePage() {
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
-      
+
       <div className="max-w-4xl w-full space-y-8 text-center">
         {/* Header */}
         <div className="space-y-4 animate-fade-in">
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-            Market Trend Prediction
+            StockSage
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Advanced analytics and visualization dashboard for stocks and
@@ -29,9 +29,7 @@ export default function HomePage() {
         {/* Selection Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
           {/* Stocks Card */}
-          <Card
-            className="p-8 backdrop-blur-sm bg-card/50 border-border hover:scale-[1.02] hover:border-primary/50 transition-all cursor-pointer group"
-          >
+          <Card className="p-8 backdrop-blur-sm bg-card/50 border-border hover:scale-[1.02] hover:border-primary/50 transition-all cursor-pointer group">
             <Link href="/stocks">
               <div className="space-y-4">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -86,15 +84,14 @@ export default function HomePage() {
           </div>
           <div className="space-y-2">
             <div className="text-3xl">📈</div>
-            <h3 className="font-semibold text-foreground">
-              Sentiment Analysis
-            </h3>
+            <h3 className="font-semibold text-foreground">Sentiment Analysis</h3>
             <p className="text-sm text-muted-foreground">
               Market sentiment from news and social media
             </p>
           </div>
         </div>
       </div>
+
     </div>
   );
 }

@@ -21,7 +21,7 @@ export default async function connect(): Promise<Mongoose> {
 
     if (!cached.promise) {
         cached.promise = mongoose
-            .connect(`${MONGODB_URI}/comp`)
+            .connect(`${MONGODB_URI}/trend-seer`)
             .then((mongoose) => mongoose);
     }
 

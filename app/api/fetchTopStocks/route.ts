@@ -5,18 +5,23 @@ import yahooFinance from 'yahoo-finance2';
 
 export async function GET() {
     try {
-        // Top 50 US stocks ke ticker symbols
-        const top50Symbols = [
-            'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'BABA', 'SPY', 'V',
-            'JNJ', 'WMT', 'MA', 'PYPL', 'DIS', 'NFLX', 'AMD', 'INTC', 'CSCO', 'BA',
-            'GS', 'IBM', 'GE', 'CAT', 'MMM', 'KO', 'PEP', 'PG', 'XOM', 'CVX', 'COP',
-            'SLB', 'HAL', 'OXY', 'LMT', 'RTX', 'NOC', 'GD', 'HUM', 'UNH', 'CVS', 'CNC',
-            'CI', 'ANTM', 'ELV', 'WBA', 'COST', 'TGT', 'LOW', 'HD', 'BBY', 'M', 'KSS'
+        // Top Indian stocks ke NSE ticker symbols
+        const topIndianSymbols = [
+            'RELIANCE.NS', 'TCS.NS', 'HDFCBANK.NS', 'INFY.NS', 'HINDUNILVR.NS',
+            'ICICIBANK.NS', 'KOTAKBANK.NS', 'SBIN.NS', 'LT.NS', 'AXISBANK.NS',
+            'ITC.NS', 'BAJAJ-AUTO.NS', 'BHARTIARTL.NS', 'HCLTECH.NS', 'MARUTI.NS',
+            'WIPRO.NS', 'TECHM.NS', 'ASIANPAINT.NS', 'SUNPHARMA.NS', 'NESTLEIND.NS',
+            'ULTRACEMCO.NS', 'TITAN.NS', 'HDFCLIFE.NS', 'POWERGRID.NS', 'JSWSTEEL.NS',
+            'ONGC.NS', 'DRREDDY.NS', 'COALINDIA.NS', 'ADANIPORTS.NS', 'GRASIM.NS',
+            'SBILIFE.NS', 'BPCL.NS', 'NTPC.NS', 'DIVISLAB.NS', 'TATASTEEL.NS',
+            'BAJFINANCE.NS', 'EICHERMOT.NS', 'HAVELLS.NS', 'CIPLA.NS', 'INDUSINDBK.NS',
+            'HDFC.NS', 'VEDL.NS', 'M&M.NS', 'BRITANNIA.NS', 'ICICIGI.NS', 'SHREECEM.NS',
+            'ADANIGREEN.NS', 'APOLLOHOSP.NS', 'TATACONSUM.NS', 'RECLTD.NS', 'DMART.NS'
         ];
 
         // Stocks ka data fetch karna
         const stocksData = await Promise.all(
-            top50Symbols.map(async (symbol) => {
+            topIndianSymbols.map(async (symbol) => {
                 try {
                     const quote = await yahooFinance.quote(symbol);
                     return {
@@ -39,7 +44,7 @@ export async function GET() {
 
         return NextResponse.json(validStocks);
     } catch (error) {
-        console.error('Error fetching top stocks:', error);
+        console.error('Error fetching top Indian stocks:', error);
         return NextResponse.json({ message: 'Error fetching top stocks', error: error.message }, { status: 500 });
     }
 }

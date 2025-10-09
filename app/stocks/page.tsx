@@ -89,7 +89,6 @@ export default function StocksPage() {
             ))}
           </div>
         </div>
-
         {/* Top 100 Stocks Table */}
         <div className="overflow-x-auto">
           <h2 className="text-2xl font-bold text-foreground mb-4">
@@ -99,32 +98,54 @@ export default function StocksPage() {
           {loading ? (
             <p className="text-muted-foreground">Loading top 100 stocks...</p>
           ) : (
-            <table className="w-full border-collapse border border-gray-300">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border px-2 py-1">#</th>
-                  <th className="border px-2 py-1">Symbol</th>
-                  <th className="border px-2 py-1">Company</th>
-                  <th className="border px-2 py-1">Price</th>
-                  <th className="border px-2 py-1">Market Cap</th>
-                  <th className="border px-2 py-1">Volume</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topStocks.map((stock, idx) => (
-                  <tr key={stock.symbol} className="hover:bg-gray-50">
-                    <td className="border px-2 py-1">{idx + 1}</td>
-                    <td className="border px-2 py-1">{stock.symbol}</td>
-                    <td className="border px-2 py-1">{stock.companyName}</td>
-                    <td className="border px-2 py-1">{stock.currentPrice}</td>
-                    <td className="border px-2 py-1">{stock.marketCap}</td>
-                    <td className="border px-2 py-1">{stock.volume}</td>
+            <div className="rounded-lg border border-border shadow-sm overflow-hidden">
+              <table className="w-full table-auto border-collapse text-sm">
+                <thead className="bg-gray-100 dark:bg-gray-800">
+                  <tr>
+                    <th className="border-b border-border px-3 py-2 text-left text-muted-foreground">#</th>
+                    <th className="border-b border-border px-3 py-2 text-left text-muted-foreground">Symbol</th>
+                    <th className="border-b border-border px-3 py-2 text-left text-muted-foreground">Company</th>
+                    <th className="border-b border-border px-3 py-2 text-right text-muted-foreground">Price</th>
+                    <th className="border-b border-border px-3 py-2 text-right text-muted-foreground">Market Cap</th>
+                    <th className="border-b border-border px-3 py-2 text-right text-muted-foreground">Volume</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-background dark:bg-background-dark">
+                  {topStocks.map((stock, idx) => (
+                    <tr
+                      key={stock.symbol}
+                      onClick={() => window.location.href = `/stock/${stock.symbol}`}
+                      className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                    >
+                      <td className="border-b border-border px-3 py-2">{idx + 1}</td>
+                      <td className="border-b border-border px-3 py-2 font-semibold text-primary">
+                        {stock.symbol}
+                      </td>
+                      <td className="border-b border-border px-3 py-2 text-foreground dark:text-white">
+                        {stock.companyName}
+                      </td>
+                      <td className="border-b border-border px-3 py-2 text-right text-foreground dark:text-white">
+                        ₹{stock.currentPrice.toLocaleString()}
+                      </td>
+                      <td className="border-b border-border px-3 py-2 text-right text-foreground dark:text-white">
+                        {typeof stock.marketCap === "number"
+                          ? `$${(stock.marketCap / 1_000_000_000).toFixed(2)}B`
+                          : stock.marketCap}
+                      </td>
+                      <td className="border-b border-border px-3 py-2 text-right text-foreground dark:text-white">
+                        {typeof stock.volume === "number"
+                          ? stock.volume.toLocaleString()
+                          : stock.volume}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+
+              </table>
+            </div>
           )}
         </div>
+
       </main>
 
       {/* Footer */}
