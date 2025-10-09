@@ -28,12 +28,11 @@ export const StockHeader = ({ data }: StockHeaderProps) => {
           <div>
             <p className="text-sm text-muted-foreground mb-1">Stock Price</p>
             <h3 className="text-3xl font-bold text-foreground">
-              ${data.currentPrice}
+              ₹{data.currentPrice}
             </h3>
             <p
-              className={`text-sm mt-1 ${
-                isPositive ? "text-success" : "text-destructive"
-              }`}
+              className={`text-sm mt-1 ${isPositive ? "text-success" : "text-destructive"
+                }`}
             >
               {isPositive ? "+" : ""}
               {data.change} ({isPositive ? "+" : ""}

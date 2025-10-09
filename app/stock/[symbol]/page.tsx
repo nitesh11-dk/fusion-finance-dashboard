@@ -124,18 +124,11 @@ export default function StockDetailPage({ params }: StockDetailPageProps) {
 
                 {/* Charts */}
                 <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="border rounded-lg p-4 shadow-sm">
-                        <h2 className="text-lg font-semibold mb-4">
-                            Price Movement (24h)
-                        </h2>
-                        <PriceChart data={data.priceData || []} />
-                    </div>
-                    <div className="border rounded-lg p-4 shadow-sm">
-                        <h2 className="text-lg font-semibold mb-4">
-                            Trading Volume (24h)
-                        </h2>
-                        <VolumeChart data={data.priceData || []} />
-                    </div>
+
+                    <PriceChart data={data.priceData || []} />
+
+                    <VolumeChart data={data.priceData || []} />
+
                 </section>
             </main>
         </div>

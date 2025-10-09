@@ -1,11 +1,8 @@
-// app/api/fetchTopStocks/route.ts
-
 import { NextResponse } from 'next/server';
 import yahooFinance from 'yahoo-finance2';
 
 export async function GET() {
     try {
-        // Top Indian stocks ke NSE ticker symbols
         const topIndianSymbols = [
             'RELIANCE.NS', 'TCS.NS', 'HDFCBANK.NS', 'INFY.NS', 'HINDUNILVR.NS',
             'ICICIBANK.NS', 'KOTAKBANK.NS', 'SBIN.NS', 'LT.NS', 'AXISBANK.NS',
@@ -19,7 +16,6 @@ export async function GET() {
             'ADANIGREEN.NS', 'APOLLOHOSP.NS', 'TATACONSUM.NS', 'RECLTD.NS', 'DMART.NS'
         ];
 
-        // Stocks ka data fetch karna
         const stocksData = await Promise.all(
             topIndianSymbols.map(async (symbol) => {
                 try {
@@ -30,6 +26,8 @@ export async function GET() {
                         currentPrice: quote.regularMarketPrice,
                         marketCap: quote.marketCap,
                         volume: quote.regularMarketVolume,
+                        changePercent: quote.regularMarketChangePercent, // ✅ Added
+                        change: quote.regularMarketChange, // ✅ Optional: absolute change
                         lastUpdated: new Date(quote.regularMarketTime * 1000),
                     };
                 } catch (error) {
@@ -39,12 +37,13 @@ export async function GET() {
             })
         );
 
-        // Null entries ko filter karna
-        const validStocks = stocksData.filter(stock => stock !== null);
-
+        const validStocks = stocksData.filter(Boolean);
         return NextResponse.json(validStocks);
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error fetching top Indian stocks:', error);
-        return NextResponse.json({ message: 'Error fetching top stocks', error: error.message }, { status: 500 });
+        return NextResponse.json(
+            { message: 'Error fetching top stocks', error: error.message },
+            { status: 500 }
+        );
     }
 }

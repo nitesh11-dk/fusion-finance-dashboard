@@ -36,11 +36,10 @@ export const StockCard = ({
             <p className="text-sm text-muted-foreground">{companyName}</p>
           </div>
           <div
-            className={`flex items-center gap-1 px-3 py-1 rounded-full ${
-              isPositive
+            className={`flex items-center gap-1 px-3 py-1 rounded-full ${isPositive
                 ? "bg-success/10 text-success"
                 : "bg-destructive/10 text-destructive"
-            }`}
+              }`}
           >
             {isPositive ? (
               <TrendingUp className="w-4 h-4" />
