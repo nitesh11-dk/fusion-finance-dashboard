@@ -9,7 +9,7 @@ import { PriceChart } from "@/components/PriceChart";
 import { VolumeChart } from "@/components/VolumeChart";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { StockFundamentals } from "@/components/StockFundamental";
-
+import { Sentiment } from "@/components/Sentiment";
 interface StockDetail {
     symbol: string;
     companyName: string;
@@ -109,7 +109,10 @@ export default function StockDetailPage({ params }: StockDetailPageProps) {
             <main className="container mx-auto px-4 py-8 space-y-8">
                 {/* Stock Overview */}
                 <StockHeader data={data} />
+                {/* <StockDetailPage symbol={symbol} /> */}
 
+                {/* TODO : done stuff  */}
+                {/* <Sentiment symbol={symbol} /> */}
                 {/* Fundamentals */}
                 <StockFundamentals symbol={symbol} />
 
@@ -127,7 +130,7 @@ export default function StockDetailPage({ params }: StockDetailPageProps) {
 
                     <PriceChart data={data.priceData || []} />
 
-                    <VolumeChart data={data.priceData || []} />
+                    {/* <VolumeChart data={data.priceData || []} /> */}
 
                 </section>
             </main>
