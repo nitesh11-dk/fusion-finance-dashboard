@@ -1,56 +1,80 @@
-"use client"
+"use client";
 
 import { ArrowLeft, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { StockCard } from "@/components/StockCard";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { trendingStocks } from "@/data/stockData";
+import { trendingStocks } from "@/data/stockData"; // Top 3
+import { useEffect, useState } from "react";
+
+interface Stock {
+  symbol: string;
+  companyName: string;
+  currentPrice: number;
+  marketCap: number | string;
+  volume: number | string;
+}
 
 export default function StocksPage() {
+  const [topStocks, setTopStocks] = useState<Stock[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTopStocks = async () => {
+      try {
+        const res = await fetch("/api/fetchTopStocks");
+        const data = await res.json();
+        // Ensure data is an array
+        setTopStocks(data?.data || data);
+      } catch (error) {
+        console.error("Error fetching top stocks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopStocks();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
-                </Button>
-              </Link>
-              <div className="flex items-center gap-3">
-                <TrendingUp className="w-6 h-6 text-primary" />
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">
-                    Trending Stocks
-                  </h1>
-                  <p className="text-sm text-muted-foreground">
-                    Top performing stocks today
-                  </p>
-                </div>
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link href="/">
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+            </Link>
+            <div className="flex items-center gap-3">
+              <TrendingUp className="w-6 h-6 text-primary" />
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">
+                  Trending Stocks
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Top performing stocks today
+                </p>
               </div>
             </div>
-            <ThemeToggle />
           </div>
+          <ThemeToggle />
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 space-y-10">
+        {/* Top 3 Cards */}
         <div className="space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold text-foreground">
-              📈 Top Trending Stocks Today
-            </h2>
-            <p className="text-muted-foreground">
-              Click on any stock to view detailed analytics, sentiment analysis, and forecasts
-            </p>
-          </div>
-
-          {/* Stock Cards Grid */}
+          <h2 className="text-3xl font-bold text-foreground">
+            📈 Top Trending Stocks Today
+          </h2>
+          <p className="text-muted-foreground">
+            Click on any stock to view detailed analytics, sentiment analysis, and forecasts
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {trendingStocks.map((stock) => (
               <StockCard
@@ -65,12 +89,48 @@ export default function StocksPage() {
             ))}
           </div>
         </div>
+
+        {/* Top 100 Stocks Table */}
+        <div className="overflow-x-auto">
+          <h2 className="text-2xl font-bold text-foreground mb-4">
+            📊 Top 100 Stocks
+          </h2>
+
+          {loading ? (
+            <p className="text-muted-foreground">Loading top 100 stocks...</p>
+          ) : (
+            <table className="w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border px-2 py-1">#</th>
+                  <th className="border px-2 py-1">Symbol</th>
+                  <th className="border px-2 py-1">Company</th>
+                  <th className="border px-2 py-1">Price</th>
+                  <th className="border px-2 py-1">Market Cap</th>
+                  <th className="border px-2 py-1">Volume</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topStocks.map((stock, idx) => (
+                  <tr key={stock.symbol} className="hover:bg-gray-50">
+                    <td className="border px-2 py-1">{idx + 1}</td>
+                    <td className="border px-2 py-1">{stock.symbol}</td>
+                    <td className="border px-2 py-1">{stock.companyName}</td>
+                    <td className="border px-2 py-1">{stock.currentPrice}</td>
+                    <td className="border px-2 py-1">{stock.marketCap}</td>
+                    <td className="border px-2 py-1">{stock.volume}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </main>
 
       {/* Footer */}
       <footer className="border-t border-border mt-16 py-6">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          Data shown is mock data (for demo only)
+          Data shown is fetched from Yahoo Finance (Top 50/100 stocks)
         </div>
       </footer>
     </div>
