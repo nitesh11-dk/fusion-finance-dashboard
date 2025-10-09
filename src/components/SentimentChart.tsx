@@ -53,8 +53,8 @@ export const SentimentChart = ({ data, stockSymbol }: SentimentChartProps) => {
               style={{ cursor: 'pointer' }}
             >
               {data.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
+                <Cell
+                  key={`cell-${index}`}
                   fill={entry.color}
                   stroke={selectedSentiment === entry.name.toLowerCase() ? "#000" : "none"}
                   strokeWidth={selectedSentiment === entry.name.toLowerCase() ? 2 : 0}
