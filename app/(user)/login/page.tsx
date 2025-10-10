@@ -27,16 +27,19 @@ export default function LoginPage() {
           autoClose: 2000,
         });
 
+        // Store only necessary user info
         localStorage.setItem(
           "user",
           JSON.stringify({
+            id: res.user.id,
             username: res.user.username,
-            role: res.user.role,
+            interestShares: res.user.interestShares || [],
+            level: res.user.level || "",
             loggedIn: true,
           })
         );
 
-        router.push("/form"); // Redirect all users to "/"
+        router.push("/form"); // Redirect all users to "/form"
       } else {
         toast.error(res.message || "❌ Login failed, please try again");
       }
@@ -47,24 +50,19 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-900 text-gray-100 px-4">
-      <div className="w-full max-w-md bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700">
-        <h2 className="text-2xl font-bold text-center mb-6 text-white">
-          Login
-        </h2>
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 text-gray-900 px-4">
+      <div className="w-full max-w-md bg-white rounded-lg p-6 shadow-md border border-gray-200">
+        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label
-              htmlFor="username"
-              className="block text-sm mb-1 font-medium text-gray-300"
-            >
+            <label htmlFor="username" className="block text-sm mb-1 font-medium">
               Username
             </label>
             <input
               id="username"
               type="text"
               {...register("username", { required: "Username is required" })}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
               placeholder="Enter your username"
             />
             {errors.username && (
@@ -73,17 +71,14 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm mb-1 font-medium text-gray-300"
-            >
+            <label htmlFor="password" className="block text-sm mb-1 font-medium">
               Password
             </label>
             <input
               id="password"
               type="password"
               {...register("password", { required: "Password is required" })}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
               placeholder="Enter your password"
             />
             {errors.password && (
@@ -94,15 +89,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+            className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-200 transition"
           >
             {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-center text-gray-400">
+        <p className="mt-4 text-sm text-center text-gray-500">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-indigo-400 hover:underline">
+          <Link href="/register" className="text-indigo-600 hover:underline">
             Register here
           </Link>
         </p>

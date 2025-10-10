@@ -7,10 +7,9 @@ import User from "@/lib/models/User";
 export async function registerUser(formData: {
   username: string;
   password: string;
-  role?: "admin" | "supervisor" | "user";
 }) {
   try {
-    let { username, password, role = "admin" } = formData;
+    let { username, password } = formData;
 
     await connect();
 
@@ -35,7 +34,8 @@ export async function registerUser(formData: {
     const user = await User.create({
       username,
       password: hashed,
-      role,
+      interestShares: [],
+      level: "Beginner", // default level
     });
 
     return { success: true, message: "🎉 Registered successfully", user };

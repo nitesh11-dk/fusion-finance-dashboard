@@ -13,9 +13,7 @@ export default function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -24,8 +22,8 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const res = await registerUser({
-        ...formData,
-        role: "user", // ✅ Default role
+        username: formData.username,
+        password: formData.password,
       });
 
       if (res.success) {
@@ -34,7 +32,8 @@ export default function RegisterPage() {
       } else {
         toast.error(res.message);
       }
-    } catch {
+    } catch (err: any) {
+      console.error(err);
       toast.error("🚨 Something went wrong");
     } finally {
       setLoading(false);
@@ -56,7 +55,7 @@ export default function RegisterPage() {
             value={formData.username}
             onChange={handleChange}
             required
-            className="w-full p-2 border rounded-lg"
+            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
           <input
@@ -66,13 +65,13 @@ export default function RegisterPage() {
             value={formData.password}
             onChange={handleChange}
             required
-            className="w-full p-2 border rounded-lg"
+            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
           >
             {loading ? "Registering..." : "Register"}
           </button>
