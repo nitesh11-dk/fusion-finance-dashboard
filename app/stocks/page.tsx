@@ -87,7 +87,7 @@ export default function StocksPage() {
       <main className="container mx-auto px-4 py-8 space-y-10">
         {/* User Selected Stocks */}
         <section>
-          <h2 className="text-3xl font-bold text-foreground mb-2">📌 Your Selected Stocks</h2>
+          <h2 className="text-3xl font-bold text-foreground mb-2"> Your Selected Stocks</h2>
           <p className="text-muted-foreground mb-6">
             Stocks you chose in your onboarding
           </p>
@@ -147,7 +147,7 @@ export default function StocksPage() {
         {/* Full Stocks Table */}
         {/* ...Keep your existing table code here as is... */}
         <section>
-          <h2 className="text-2xl font-bold text-foreground mb-4">📊 Top 100 Stocks</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4"> Top 100 Stocks</h2>
 
           {loading ? (
             <p className="text-muted-foreground">Loading...</p>

@@ -1,4 +1,4 @@
-import { TrendingUp, DollarSign, Activity, Clock } from "lucide-react";
+import { TrendingUp, DollarSign, Activity, Clock, IndianRupee } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 interface StockOverview {
@@ -39,11 +39,11 @@ export const StockHeader = ({ data }: StockHeaderProps) => {
               {data.changePercent}%)
             </p>
           </div>
-          <DollarSign className="w-8 h-8 text-primary" />
+          <IndianRupee className="w-8 h-8 text-primary" />
         </div>
       </Card>
 
-      <Card className="p-6 backdrop-blur-sm bg-card/50 border-border hover:scale-[1.02] transition-transform">
+      {/* <Card className="p-6 backdrop-blur-sm bg-card/50 border-border hover:scale-[1.02] transition-transform">
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm text-muted-foreground mb-1">
@@ -58,7 +58,7 @@ export const StockHeader = ({ data }: StockHeaderProps) => {
           </div>
           <TrendingUp className="w-8 h-8 text-success" />
         </div>
-      </Card>
+      </Card> */}
 
 
       <Card className="p-6 backdrop-blur-sm bg-card/50 border-border hover:scale-[1.02] transition-transform">
