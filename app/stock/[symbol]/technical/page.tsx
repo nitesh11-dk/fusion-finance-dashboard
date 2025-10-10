@@ -92,15 +92,25 @@ export default function TechnicalPage({ params }: TechnicalPageProps) {
     return (
         <div className="min-h-screen bg-background p-4">
             {/* Header */}
-            <header className="flex items-center gap-4 mb-6">
+            <header className="flex items-center gap-4 mb-6 w-full">
                 <Link href={`/stock/${symbol}`}>
                     <Button variant="ghost" size="sm">
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         Back
                     </Button>
                 </Link>
+
                 <h1 className="text-2xl font-bold">{symbol} Technical Analysis</h1>
+
+                {/* Disclaimer */}
+                <div
+                    className="ml-auto bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded shadow-md"
+                    style={{ maxWidth: "220px", textAlign: "center" }}
+                >
+                    ⚠️ For market analysis only — do not blindly trust
+                </div>
             </header>
+
 
             {/* Technical Score */}
             {score !== null && (

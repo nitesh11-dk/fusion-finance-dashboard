@@ -96,14 +96,25 @@ export default function StockDetailPage({ params }: StockDetailPageProps) {
                             <h1 className="text-2xl font-bold text-foreground">
                                 {data.companyName} ({data.symbol})
                             </h1>
-                            <p className="text-sm text-muted-foreground">
-                                Real-Time Stock Dashboard
-                            </p>
+                            <p className="text-sm text-muted-foreground">Real-Time Stock Dashboard</p>
                         </div>
                     </div>
-                    <ThemeToggle />
+
+                    <div className="flex items-center gap-4">
+                        {/* Disclaimer */}
+                        <div
+                            className="bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded shadow-md"
+                            style={{ maxWidth: "220px", textAlign: "center" }}
+                        >
+                            ⚠️ For market analysis only — do not blindly trust
+                        </div>
+
+                        {/* Theme Toggle */}
+                        <ThemeToggle />
+                    </div>
                 </div>
             </header>
+
 
             {/* Main Content */}
             <main className="container mx-auto px-4 py-8 space-y-8">

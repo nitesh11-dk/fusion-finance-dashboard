@@ -167,7 +167,19 @@ export default function StocksPage() {
               </div>
             </div>
           </div>
-          <ThemeToggle />
+
+          <div className="flex items-center gap-4">
+            {/* Disclaimer */}
+            <div
+              className="bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded shadow-md"
+              style={{ maxWidth: "220px", textAlign: "center" }}
+            >
+              ⚠️ For market analysis only — do not blindly trust
+            </div>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 

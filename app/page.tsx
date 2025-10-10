@@ -9,8 +9,16 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-background to-primary/10 p-4">
+      {/* Disclaimer */}
+      <div
+        className="fixed top-4 right-4 z-50 bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded shadow-md text-center"
+        style={{ maxWidth: "220px" }}
+      >
+        ⚠️ For market analysis only — do not blindly trust
+      </div>
+
       {/* Theme Toggle */}
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-16 right-4">
         <ThemeToggle />
       </div>
 
@@ -76,22 +84,17 @@ export default function HomePage() {
             </p>
           </div>
           <div className="space-y-2">
-            <div className="text-3xl">🤖</div>
-            <h3 className="font-semibold text-foreground">AI Predictions</h3>
-            <p className="text-sm text-muted-foreground">
-              Advanced machine learning forecasts
-            </p>
+            <div className="space-y-2">
+              <div className="text-3xl">📊</div>
+              <h3 className="font-semibold text-foreground">Fundamental & Technical Scores</h3>
+              <p className="text-sm text-muted-foreground">
+                Comprehensive analysis combining company fundamentals and technical indicators
+              </p>
+            </div>
           </div>
-          <div className="space-y-2">
-            <div className="text-3xl">📈</div>
-            <h3 className="font-semibold text-foreground">Sentiment Analysis</h3>
-            <p className="text-sm text-muted-foreground">
-              Market sentiment from news and social media
-            </p>
-          </div>
+
         </div>
       </div>
-
     </div>
   );
 }

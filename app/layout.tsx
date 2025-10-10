@@ -44,6 +44,8 @@ export default function RootLayout({
         >
           <Providers>
             <TooltipProvider>
+              {/* ✅ Disclaimer Badge */}
+
               {children}
 
               {/* ✅ Global Toast Notification Container */}
