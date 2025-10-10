@@ -60,20 +60,7 @@ export const StockHeader = ({ data }: StockHeaderProps) => {
         </div>
       </Card>
 
-      <Card className="p-6 backdrop-blur-sm bg-card/50 border-border hover:scale-[1.02] transition-transform">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Market Cap</p>
-            <h3 className="text-2xl font-bold text-foreground">
-              ${data.marketCap}
-            </h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              Volume: {data.volume}
-            </p>
-          </div>
-          <Activity className="w-8 h-8 text-accent" />
-        </div>
-      </Card>
+
 
       <Card className="p-6 backdrop-blur-sm bg-card/50 border-border hover:scale-[1.02] transition-transform">
         <div className="flex items-start justify-between">

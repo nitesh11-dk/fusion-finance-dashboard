@@ -7,50 +7,37 @@ export async function middleware(req) {
   const token = cookieStore.get("token")?.value;
   const pathname = req.nextUrl.pathname;
 
-  const isProtectedRoute =
-    pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
+  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register");
 
-  const isAuthPage =
-    pathname.startsWith("/login") || pathname.startsWith("/register");
-
-  // ✅ If token exists, validate it
   if (token) {
     const payload = await getUserFromToken(token);
 
     if (!payload) {
-      // invalid token -> redirect to login
+      // Invalid token -> redirect to login
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    // ✅ Role-based restriction
-    if (pathname.startsWith("/admin") && payload.role !== "admin") {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-    if (pathname.startsWith("/dashboard") && payload.role !== "supervisor") {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-
-    // ✅ Prevent logged-in users from accessing login/register
+    // Prevent logged-in users from accessing login/register
     if (isAuthPage) {
       return NextResponse.redirect(new URL("/", req.url));
     }
 
-    // ✅ Allow access to "/" and protected routes for valid token
+    // Allow access to all other pages
     const response = NextResponse.next();
     response.headers.set("x-user-id", payload.id);
-    response.headers.set("x-user-role", payload.role);
+    response.headers.set("x-username", payload.username);
     return response;
   } else {
-    // ✅ No token -> redirect to login if trying to access protected or "/" route
-    if (isProtectedRoute || pathname === "/") {
+    // Not logged in -> redirect to login if trying to access any protected page
+    if (!isAuthPage) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-  // ✅ Allow public access to login/register for non-logged users
+  // Allow public access to login/register pages
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/login", "/register", "/dashboard/:path*", "/admin/:path*"],
+  matcher: ["/", "/login", "/register", "/:path*"],
 };

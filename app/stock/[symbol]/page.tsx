@@ -9,6 +9,7 @@ import { PriceChart } from "@/components/PriceChart";
 import { VolumeChart } from "@/components/VolumeChart";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { StockFundamentals } from "@/components/StockFundamental";
+import { Analysis } from "@/components/Sentiment";
 interface StockDetail {
     symbol: string;
     companyName: string;
@@ -112,7 +113,7 @@ export default function StockDetailPage({ params }: StockDetailPageProps) {
 
 
                 {/* Fundamentals */}
-                <StockFundamentals symbol={symbol} />
+
 
                 {/* Technical Analysis Button */}
                 <div className="flex justify-end my-6">
@@ -127,10 +128,11 @@ export default function StockDetailPage({ params }: StockDetailPageProps) {
                 <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                     <PriceChart data={data.priceData || []} />
-
+                    <Analysis symbol={symbol} />
                     {/* <VolumeChart data={data.priceData || []} /> */}
 
                 </section>
+                <StockFundamentals symbol={symbol} />
             </main>
         </div>
     );

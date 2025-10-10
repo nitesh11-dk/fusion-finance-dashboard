@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
@@ -14,8 +14,7 @@ export async function getUserFromToken(token: string) {
 
     return {
       id: payload.id as string,
-      role: payload.role as "admin" | "supervisor",
-      departmentId: payload.departmentId || null,
+      username: payload.username as string, // ✅ include username
     };
   } catch (error) {
     console.error("❌ Invalid token:", error);

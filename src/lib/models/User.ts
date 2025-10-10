@@ -3,7 +3,8 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IUser extends Document {
     username: string;
     password: string;
-    role: "admin" | "supervisor" | "user";
+    interestShares: string[];
+    level: string;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -16,11 +17,18 @@ const UserSchema = new Schema<IUser>(
             trim: true,
             match: [/^[a-z0-9]+$/, "Username can only contain lowercase letters and numbers"],
         },
-        password: { type: String, required: true },
-        role: {
+        password: {
             type: String,
-            enum: ["admin", "supervisor", "user"], // ✅ added user role
-            default: "user",
+            required: true,
+        },
+        interestShares: {
+            type: [String],
+            default: [],
+        },
+        level: {
+            type: String,
+
+            enum: ["Beginner", "Intermediate", "Advanced"],
         },
     },
     { timestamps: true }
