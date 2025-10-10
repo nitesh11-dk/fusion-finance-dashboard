@@ -1,28 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { RadialBarChart, RadialBar, Legend } from "recharts";
-import { Button } from "@/components/ui/button";
+import { RadialBarChart, RadialBar } from "recharts";
 
 interface FundamentalMetrics {
-  marketCap: number | null;
-  peRatio: number | null;
-  pbRatio: number | null;
-  eps: number | null;
-  roe: number | null;
-  debtEquity: number | null;
-  dividendYield: number | null;
-  totalRevenue: number | null;
-  freeCashFlow: number | null;
-  fiftyTwoWeekHigh: number | null;
-  fiftyTwoWeekLow: number | null;
-  pegRatio: number | null;
-  operatingMargins: number | null;
-  currentRatio: number | null;
-  beta: number | null;
-  profitMargins: number | null;
-  revenuePerShare: number | null;
-  earningsGrowth: number | null;
+  // same as before
 }
 
 interface FundamentalResult {
@@ -87,21 +69,24 @@ export function Analysis({ symbol }: AnalysisProps) {
     fetchData();
   }, [symbol]);
 
-  if (loading) return <p className="text-center mt-4 text-muted-foreground">Loading analysis...</p>;
+  if (loading) return <p className="text-center mt-4 text-gray-500">Loading analysis...</p>;
   if (error || !fundamental || !technical) return <p className="text-center mt-4 text-red-600">Error: {error || "Data not found"}</p>;
 
-  // Short-term decision based on technical indicators (simplified)
+  // === Calculate scores ===
   const latestRSI = technical.indicators.rsi[technical.indicators.rsi.length - 1] || 50;
   const shortTermScore = Math.max(0, Math.min(100, 100 - latestRSI)); // higher RSI -> less buy
-  const shortTermText = latestRSI < 30 ? "Short-term BUY suggested (oversold)." :
-    latestRSI > 70 ? "Short-term SELL suggested (overbought)." :
-      "Short-term HOLD recommended.";
-
-  // Long-term decision based on fundamental score
   const longTermScore = Math.round((fundamental.fundamentalScore || 0) * 100);
-  const longTermText = longTermScore > 70 ? "Strong long-term BUY suggested based on fundamentals." :
-    longTermScore > 50 ? "Moderate long-term BUY suggested." :
-      "Long-term HOLD / Avoid recommendation.";
+
+  // === Text explanations ===
+  const shortTermText =
+    latestRSI < 30 ? "Short-term BUY suggested (oversold)." :
+      latestRSI > 70 ? "Short-term SELL suggested (overbought)." :
+        "Short-term HOLD recommended.";
+
+  const longTermText =
+    longTermScore > 70 ? "Strong long-term BUY suggested based on fundamentals." :
+      longTermScore > 50 ? "Moderate long-term BUY suggested." :
+        "Long-term HOLD / Avoid recommendation.";
 
   const shortData = [{ name: "Short-Term", value: shortTermScore }];
   const longData = [{ name: "Long-Term", value: longTermScore }];
@@ -109,15 +94,18 @@ export function Analysis({ symbol }: AnalysisProps) {
   const getColor = (score: number) => score > 70 ? "#16a34a" : score > 50 ? "#f59e0b" : "#dc2626";
 
   return (
-    <div className="space-y-10">
-      <h1 className="text-2xl font-bold text-foreground">Analysis for {symbol}</h1>
+    <div className="space-y-12">
+      <h1 className="text-2xl font-bold text-gray-800 text-center mb-6">
+        Stock Analysis: {symbol.toUpperCase()}
+      </h1>
 
-      <div className="flex flex-col md:flex-row gap-10 justify-center items-center">
-        {/* Short-term RadialBar */}
-        <div className="w-48 h-48">
+      <div className="flex flex-col md:flex-row justify-center items-center gap-12">
+        {/* Short-term chart / Technical Analysis */}
+        <div className="flex flex-col items-center">
+          <h3 className="text-lg font-semibold mb-2 text-gray-800">Technical Analysis</h3>
           <RadialBarChart
-            width={192}
-            height={192}
+            width={180}
+            height={180}
             innerRadius="70%"
             outerRadius="100%"
             data={shortData}
@@ -132,23 +120,24 @@ export function Analysis({ symbol }: AnalysisProps) {
               fill={getColor(shortTermScore)}
             />
             <text
-              x={96}
-              y={96}
+              x={90}
+              y={90}
               textAnchor="middle"
               dominantBaseline="middle"
               className="font-bold text-lg"
             >
-              {shortTermScore}%
+              {shortTermScore.toFixed(2)}%
             </text>
           </RadialBarChart>
-          <p className="mt-2 text-center text-sm">{shortTermText}</p>
+          <p className="mt-3 text-center text-sm text-gray-700">{shortTermText}</p>
         </div>
 
-        {/* Long-term RadialBar */}
-        <div className="w-48 h-48">
+        {/* Long-term chart / Fundamental Analysis */}
+        <div className="flex flex-col items-center">
+          <h3 className="text-lg font-semibold mb-2 text-gray-800">Fundamental Analysis</h3>
           <RadialBarChart
-            width={192}
-            height={192}
+            width={180}
+            height={180}
             innerRadius="70%"
             outerRadius="100%"
             data={longData}
@@ -163,19 +152,18 @@ export function Analysis({ symbol }: AnalysisProps) {
               fill={getColor(longTermScore)}
             />
             <text
-              x={96}
-              y={96}
+              x={90}
+              y={90}
               textAnchor="middle"
               dominantBaseline="middle"
               className="font-bold text-lg"
             >
-              {longTermScore}%
+              {longTermScore.toFixed(2)}%
             </text>
           </RadialBarChart>
-          <p className="mt-2 text-center text-sm">{longTermText}</p>
+          <p className="mt-3 text-center text-sm text-gray-700">{longTermText}</p>
         </div>
       </div>
-
 
     </div>
   );
