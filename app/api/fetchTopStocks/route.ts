@@ -1,14 +1,17 @@
-import { NextResponse } from 'next/server';
-import yahooFinance from 'yahoo-finance2';
-import { topIndianSymbols } from '@/data/stockData';
+import { NextResponse } from "next/server";
+import yahooFinance from "yahoo-finance2";
+import { topIndianSymbols } from "@/data/stockData";
+import { topUSSymbols } from "@/data/stockData"; // add US symbols array
 
-
-export async function GET() {
+export async function GET(req: Request) {
     try {
+        const url = new URL(req.url);
+        const market = url.searchParams.get("market") || "NS"; // default to NS
 
+        const symbols = market === "US" ? topUSSymbols : topIndianSymbols;
 
         const stocksData = await Promise.all(
-            topIndianSymbols.map(async (symbol: string) => {
+            symbols.map(async (symbol: string) => {
                 try {
                     const quote = await yahooFinance.quote(symbol);
                     return {
@@ -19,6 +22,7 @@ export async function GET() {
                         volume: quote.regularMarketVolume,
                         changePercent: quote.regularMarketChangePercent,
                         change: quote.regularMarketChange,
+                        market,
                         lastUpdated: new Date(quote.regularMarketTime * 1000),
                     };
                 } catch (error) {
@@ -31,9 +35,9 @@ export async function GET() {
         const validStocks = stocksData.filter(Boolean);
         return NextResponse.json(validStocks);
     } catch (error: any) {
-        console.error('Error fetching top Indian stocks:', error);
+        console.error("Error fetching top stocks:", error);
         return NextResponse.json(
-            { message: 'Error fetching top stocks', error: error.message },
+            { message: "Error fetching top stocks", error: error.message },
             { status: 500 }
         );
     }

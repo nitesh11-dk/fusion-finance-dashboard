@@ -13,6 +13,7 @@ interface Stock {
   marketCap: number | string;
   volume: number | string;
   changePercent: number;
+  market: "NS" | "US";
 }
 
 interface User {
@@ -23,30 +24,45 @@ interface User {
 
 export default function StocksPage() {
   const [topStocks, setTopStocks] = useState<Stock[]>([]);
+  const [displayStocks, setDisplayStocks] = useState<Stock[]>([]);
   const [userStocks, setUserStocks] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(true);
+  const [market, setMarket] = useState<"NS" | "US">("NS");
+
+  // Filters / Sorting / Search
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState<"all" | "gainers" | "losers">("all");
+  const [sortField, setSortField] = useState<"price" | "change" | "marketCap" | "volume">("change");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   useEffect(() => {
     const fetchTopStocks = async () => {
+      setLoading(true);
       try {
-        // Fetch all top stocks
-        const res = await fetch("/api/fetchTopStocks");
-        const data = await res.json();
-        const sorted = (data?.data || data)
-          .filter((s: Stock) => typeof s.changePercent === "number")
-          .sort((a: Stock, b: Stock) => Math.abs(b.changePercent) - Math.abs(a.changePercent));
+        // Fetch top stocks from API
+        const res = await fetch(`/api/fetchTopStocks?market=${market}`);
+        const data: Stock[] = await res.json();
+        setTopStocks(data);
 
-        setTopStocks(sorted.slice(0, 100));
+        // Get user interestShares from localStorage
+        const storedShares = localStorage.getItem("interestShares");
+        let interestShares: string[] = [];
 
-        // Fetch logged-in user
-        const userRes = await fetch("/api/user");
-        const userData: { user: User } = await userRes.json();
-        if (userData?.user?.interestShares) {
-          const selected = sorted.filter((s: Stock) =>
-            userData.user.interestShares.includes(s.symbol)
-          );
-          setUserStocks(selected.slice(0, 3)); // show first 3 user-selected stocks
+        if (storedShares) {
+          interestShares = JSON.parse(storedShares);
+        } else {
+          // Fetch from API only if not in localStorage
+          const userRes = await fetch("/api/user");
+          const userData: { user: User } = await userRes.json();
+          interestShares = userData?.user?.interestShares || [];
+
+          // Save to localStorage for next time
+          localStorage.setItem("interestShares", JSON.stringify(interestShares));
         }
+
+        // Filter topStocks to get user-selected ones
+        const selected = data.filter((s) => interestShares.includes(s.symbol));
+        setUserStocks(selected.slice(0, 3));
       } catch (error) {
         console.error("Error fetching stocks or user data:", error);
       } finally {
@@ -55,7 +71,81 @@ export default function StocksPage() {
     };
 
     fetchTopStocks();
-  }, []);
+  }, [market]);
+
+
+  // Filter, search, sort effect
+  useEffect(() => {
+    let filtered = [...topStocks];
+
+    // Filter gainers / losers
+    if (filter === "gainers") filtered = filtered.filter((s) => s.changePercent > 0);
+    if (filter === "losers") filtered = filtered.filter((s) => s.changePercent < 0);
+
+    // Search
+    if (searchQuery)
+      filtered = filtered.filter(
+        (s) =>
+          s.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.companyName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+    // Sort
+    filtered.sort((a, b) => {
+      let aVal, bVal;
+      switch (sortField) {
+        case "price":
+          aVal = a.currentPrice;
+          bVal = b.currentPrice;
+          break;
+        case "change":
+          aVal = a.changePercent;
+          bVal = b.changePercent;
+          break;
+        case "marketCap":
+          aVal = Number(a.marketCap);
+          bVal = Number(b.marketCap);
+          break;
+        case "volume":
+          aVal = Number(a.volume);
+          bVal = Number(b.volume);
+          break;
+      }
+      return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
+    });
+
+    setDisplayStocks(filtered);
+  }, [topStocks, searchQuery, filter, sortField, sortOrder]);
+
+  const formatMarketCap = (value: number | string) => {
+    if (typeof value !== "number") return value;
+    if (market === "NS") {
+      return value >= 10_000_000
+        ? `₹${(value / 10_000_000).toFixed(2)} Cr`
+        : value >= 100_000
+          ? `₹${(value / 100_000).toFixed(2)} L`
+          : `₹${value.toLocaleString()}`;
+    } else {
+      return value >= 1_000_000
+        ? `$${(value / 1_000_000).toFixed(2)} M`
+        : `$${(value / 1_000).toFixed(2)} K`;
+    }
+  };
+
+  const formatVolume = (value: number | string) => {
+    if (typeof value !== "number") return value;
+    if (market === "NS") {
+      return value >= 10_000_000
+        ? `${(value / 10_000_000).toFixed(2)} Cr`
+        : value >= 100_000
+          ? `${(value / 100_000).toFixed(2)} L`
+          : value.toLocaleString();
+    } else {
+      return value >= 1_000_000
+        ? `${(value / 1_000_000).toFixed(2)} M`
+        : value.toLocaleString();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
@@ -73,9 +163,7 @@ export default function StocksPage() {
               <TrendingUp className="w-6 h-6 text-primary" />
               <div>
                 <h1 className="text-2xl font-bold text-foreground">Trending Stocks</h1>
-                <p className="text-sm text-muted-foreground">
-                  Your selected stocks today
-                </p>
+                <p className="text-sm text-muted-foreground">Your selected stocks today</p>
               </div>
             </div>
           </div>
@@ -83,15 +171,14 @@ export default function StocksPage() {
         </div>
       </header>
 
-      {/* Main Content */}
+
+
       <main className="container mx-auto px-4 py-8 space-y-10">
+        {/* Market Toggle */}
         {/* User Selected Stocks */}
         <section>
-          <h2 className="text-3xl font-bold text-foreground mb-2"> Your Selected Stocks</h2>
-          <p className="text-muted-foreground mb-6">
-            Stocks you chose in your onboarding
-          </p>
-
+          <h2 className="text-3xl font-bold text-foreground mb-2">Your Selected Stocks</h2>
+          <p className="text-muted-foreground mb-6">Stocks you chose in your onboarding</p>
           {loading ? (
             <p className="text-muted-foreground">Loading your stocks...</p>
           ) : (
@@ -110,7 +197,9 @@ export default function StocksPage() {
                         <p className="text-sm text-muted-foreground">{stock.companyName}</p>
                       </div>
                       <div
-                        className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${isPositive ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+                        className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${isPositive
+                          ? "bg-green-100 text-green-600"
+                          : "bg-red-100 text-red-600"
                           }`}
                       >
                         {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
@@ -120,18 +209,13 @@ export default function StocksPage() {
                     </div>
 
                     <div className="mt-4 text-3xl font-bold">
-                      ₹{stock.currentPrice.toLocaleString()}
+                      {market === "NS" ? `₹${stock.currentPrice.toLocaleString()}` : `$${stock.currentPrice.toLocaleString()}`}
                     </div>
-
                     <div className="text-sm text-muted-foreground mt-1">
-                      Market Cap:{" "}
-                      {typeof stock.marketCap === "number"
-                        ? stock.marketCap >= 10_000_000
-                          ? `₹${(stock.marketCap / 10_000_000).toFixed(2)} Cr`
-                          : stock.marketCap >= 100_000
-                            ? `₹${(stock.marketCap / 100_000).toFixed(2)} L`
-                            : `₹${stock.marketCap.toLocaleString()}`
-                        : stock.marketCap}
+                      Market Cap: {formatMarketCap(stock.marketCap)}
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      Volume: {formatVolume(stock.volume)}
                     </div>
 
                     <Button className="w-full mt-4" variant="secondary">
@@ -144,11 +228,63 @@ export default function StocksPage() {
           )}
         </section>
 
-        {/* Full Stocks Table */}
-        {/* ...Keep your existing table code here as is... */}
-        <section>
-          <h2 className="text-2xl font-bold text-foreground mb-4"> Top 100 Stocks</h2>
+        <div className="flex gap-2 mb-4">
+          <Button
+            variant={market === "NS" ? "default" : "outline"}
+            onClick={() => setMarket("NS")}
+          >
+            NSE Stocks
+          </Button>
+          {/* <Button
+            variant={market === "US" ? "default" : "outline"}
+            onClick={() => setMarket("US")}
+          >
+            US Stocks
+          </Button> */}
+        </div>
 
+        {/* Filters / Search */}
+        <div className="flex flex-wrap gap-2 mb-4 items-center">
+          <input
+            type="text"
+            placeholder="Search by symbol or company"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border rounded px-3 py-1 flex-1"
+          />
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as any)}
+            className="border rounded px-3 py-1"
+          >
+            <option value="all">All</option>
+            <option value="gainers">Gainers</option>
+            <option value="losers">Losers</option>
+          </select>
+          <select
+            value={sortField}
+            onChange={(e) => setSortField(e.target.value as any)}
+            className="border rounded px-3 py-1"
+          >
+            <option value="change">Change %</option>
+            <option value="price">Price</option>
+            <option value="marketCap">Market Cap</option>
+            <option value="volume">Volume</option>
+          </select>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as any)}
+            className="border rounded px-3 py-1"
+          >
+            <option value="desc">Desc</option>
+            <option value="asc">Asc</option>
+          </select>
+        </div>
+
+
+        {/* Full Stocks Table */}
+        <section>
+          <h2 className="text-2xl font-bold text-foreground mb-4"> Stocks</h2>
           {loading ? (
             <p className="text-muted-foreground">Loading...</p>
           ) : (
@@ -166,7 +302,7 @@ export default function StocksPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {topStocks.map((stock, idx) => {
+                  {displayStocks.map((stock, idx) => {
                     const isPositive = stock.changePercent >= 0;
                     return (
                       <tr
@@ -175,42 +311,20 @@ export default function StocksPage() {
                         className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
                       >
                         <td className="px-3 py-2">{idx + 1}</td>
-                        <td className="px-3 py-2 font-semibold text-primary">
-                          {stock.symbol}
-                        </td>
+                        <td className="px-3 py-2 font-semibold text-primary">{stock.symbol}</td>
                         <td className="px-3 py-2">{stock.companyName}</td>
                         <td className="px-3 py-2 text-right">
-                          ₹{stock.currentPrice.toLocaleString()}
+                          {market === "NS" ? `₹${stock.currentPrice.toLocaleString()}` : `$${stock.currentPrice.toLocaleString()}`}
                         </td>
-                        <td
-                          className={`px-3 py-2 text-right font-medium ${isPositive ? "text-green-600" : "text-red-500"
-                            }`}
-                        >
+                        <td className={`px-3 py-2 text-right font-medium ${isPositive ? "text-green-600" : "text-red-500"}`}>
                           <div className="flex justify-end items-center gap-1">
-                            {isPositive ? (
-                              <TrendingUp className="w-4 h-4" />
-                            ) : (
-                              <TrendingDown className="w-4 h-4" />
-                            )}
+                            {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                             {isPositive ? "+" : ""}
                             {stock.changePercent.toFixed(2)}%
                           </div>
                         </td>
-                        <td className="px-3 py-2 text-right">
-                          {typeof stock.marketCap === "number"
-                            ? stock.marketCap >= 10_000_000
-                              ? `₹${(stock.marketCap / 10_000_000).toFixed(2)} Cr`
-                              : stock.marketCap >= 100_000
-                                ? `₹${(stock.marketCap / 100_000).toFixed(2)} L`
-                                : `₹${stock.marketCap.toLocaleString()}`
-                            : stock.marketCap}
-                        </td>
-
-                        <td className="px-3 py-2 text-right">
-                          {typeof stock.volume === "number"
-                            ? stock.volume.toLocaleString()
-                            : stock.volume}
-                        </td>
+                        <td className="px-3 py-2 text-right">{formatMarketCap(stock.marketCap)}</td>
+                        <td className="px-3 py-2 text-right">{formatVolume(stock.volume)}</td>
                       </tr>
                     );
                   })}

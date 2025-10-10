@@ -21,3 +21,15 @@ export const topIndianSymbols = [
   'BANKINDIA.NS', 'IDFCFIRSTB.NS', 'HINDZINC.NS', 'BALKRISIND.NS', 'OBEROIRLTY.NS',
   'CADILAHC.NS', 'COLGATE.NS', 'HDFCSTD.NS', 'SIEMENS.NS', 'NHPC.NS'
 ];
+export const topUSSymbols = [
+  'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'BRK-B', 'JPM', 'V',
+  'UNH', 'HD', 'PG', 'MA', 'DIS', 'PYPL', 'NFLX', 'ADBE', 'CMCSA', 'KO',
+  'PEP', 'INTC', 'CSCO', 'XOM', 'T', 'MRK', 'ABBV', 'CVX', 'WMT', 'ORCL',
+  'CRM', 'ACN', 'AVGO', 'QCOM', 'COST', 'NEE', 'LLY', 'MDT', 'NKE', 'MCD',
+  'TXN', 'BMY', 'HON', 'SBUX', 'UNP', 'LOW', 'PM', 'INTU', 'AMD', 'GS',
+  'BLK', 'ISRG', 'SPGI', 'RTX', 'BKNG', 'SCHW', 'DE', 'GILD', 'AMGN', 'GE',
+  'F', 'MDLZ', 'ZTS', 'ADP', 'SYK', 'ANTM', 'C', 'TMUS', 'CB', 'MO',
+  'REGN', 'PLD', 'TMO', 'NOW', 'VRTX', 'CI', 'DUK', 'CCI', 'PNC', 'ITW',
+  'ATVI', 'APD', 'BDX', 'EW', 'SHW', 'CL', 'SO', 'CCI', 'EL', 'ROST',
+  'EWBC', 'LRCX', 'ADI', 'PAYX', 'MET', 'FIS', 'WM', 'AON', 'BAX', 'CTSH'
+];
