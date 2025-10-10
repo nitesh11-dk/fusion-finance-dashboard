@@ -35,7 +35,7 @@ export default function HomePage() {
         </div>
 
         {/* Selection Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+        <div className="w-fit mx-auto mt-12">
           {/* Stocks Card */}
           <Card className="p-8 backdrop-blur-sm bg-card/50 border-border hover:scale-[1.02] hover:border-primary/50 transition-all cursor-pointer group">
             <Link href="/stocks">
@@ -56,7 +56,7 @@ export default function HomePage() {
           </Card>
 
           {/* Cryptocurrency Card */}
-          <Card className="p-8 backdrop-blur-sm bg-card/50 border-border opacity-60 cursor-not-allowed">
+          {/* <Card className="p-8 backdrop-blur-sm bg-card/50 border-border opacity-60 cursor-not-allowed">
             <div className="space-y-4">
               <div className="w-16 h-16 mx-auto bg-gradient-to-br from-muted to-muted-foreground rounded-2xl flex items-center justify-center">
                 <Bitcoin className="w-8 h-8 text-background" />
@@ -71,11 +71,11 @@ export default function HomePage() {
                 Coming Soon
               </Button>
             </div>
-          </Card>
+          </Card> */}
         </div>
 
         {/* Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+        <div className="w-fit mx-auto flex gap-6 mt-16">
           <div className="space-y-2">
             <div className="text-3xl">📊</div>
             <h3 className="font-semibold text-foreground">Real-time Data</h3>
