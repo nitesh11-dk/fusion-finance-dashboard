@@ -1,4 +1,4 @@
-# 🚀 PS19 – AI-Powered Market Trend & Sentiment Analyzer
+# 🚀 PS19 –— Market Trend Prediction & Visualization Platform
 
 ### 👥 Team Name
 **Team Hackzilla**
