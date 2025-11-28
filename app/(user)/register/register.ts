@@ -4,46 +4,41 @@ import bcrypt from "bcryptjs";
 import connect from "@/lib/mongo";
 import User from "@/lib/models/User";
 
-export async function registerUser(formData: {
-  username: string;
-  password: string;
-}) {
+export async function registerUser({ username, password }) {
   try {
-    let { username, password } = formData;
-
     await connect();
 
     username = username.trim().toLowerCase();
 
     const usernameRegex = /^[a-z0-9]+$/;
     if (!usernameRegex.test(username)) {
-      return {
-        success: false,
-        message:
-          "Username must contain only lowercase letters and numbers (no spaces or special characters).",
-      };
+      return { success: false, message: "Username must contain only lowercase letters and numbers." };
     }
 
     const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return { success: false, message: "⚠️ Username already exists" };
-    }
+    if (existingUser) return { success: false, message: "⚠️ Username already exists" };
 
     const hashed = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    const newUser = await User.create({
       username,
       password: hashed,
       interestShares: [],
-      level: "Beginner", // default level
+      level: "Beginner",
     });
 
-    return { success: true, message: "🎉 Registered successfully", user };
-  } catch (error) {
-    console.error("Registration error:", error);
     return {
-      success: false,
-      message: "🚨 Server error during registration",
+      success: true,
+      message: "🎉 Registered successfully",
+      user: {
+        id: newUser._id.toString(),
+        username: newUser.username,
+        level: newUser.level,
+      },
     };
+
+  } catch (err) {
+    console.error("Registration error:", err);
+    return { success: false, message: "🚨 Server error during registration" };
   }
 }

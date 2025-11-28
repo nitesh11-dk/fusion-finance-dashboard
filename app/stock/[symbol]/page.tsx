@@ -6,10 +6,10 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StockHeader } from "@/components/StockHeader";
 import { PriceChart } from "@/components/PriceChart";
-import { VolumeChart } from "@/components/VolumeChart";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { StockFundamentals } from "@/components/StockFundamental";
 import { Analysis } from "@/components/Sentiment";
+
 interface StockDetail {
     symbol: string;
     companyName: string;
@@ -109,41 +109,46 @@ export default function StockDetailPage({ params }: StockDetailPageProps) {
                             ⚠️ For market analysis only — do not blindly trust
                         </div>
 
-                        {/* Theme Toggle */}
                         <ThemeToggle />
                     </div>
                 </div>
             </header>
 
-
             {/* Main Content */}
             <main className="container mx-auto px-4 py-8 space-y-8">
-                {/* Stock Overview */}
                 <StockHeader data={data} />
-                {/* <StockDetailPage symbol={symbol} /> */}
+
+                {/* TWO Buttons */}
+               {/* THREE Buttons */}
+<div className="flex justify-end gap-3 my-6">
+    
+    <Link href={`/stock/${symbol}/fundamental`}>
+        <Button className="px-6" variant="outline">
+            View Fundamental Analysis →
+        </Button>
+    </Link>
+
+    <Link href={`/stock/${symbol}/technical`}>
+        <Button className="px-6" variant="outline">
+            View Technical Analysis →
+        </Button>
+    </Link>
+
+    <Link href={`/stock/${symbol}/social`}>
+        <Button className="px-6" variant="default">
+            View Social Sentiment →
+        </Button>
+    </Link>
+</div>
 
 
-                {/* Fundamentals */}
-
-
-                {/* Technical Analysis Button */}
-                <div className="flex justify-end my-6">
-                    <Link href={`/stock/${symbol}/technical`}>
-                        <Button className="px-6" variant="outline">
-                            View Technical Analysis →
-                        </Button>
-                    </Link>
-                </div>
-
-                {/* Charts */}
+                {/* Charts + Sentiment */}
                 <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
                     <PriceChart data={data.priceData || []} />
                     <Analysis symbol={symbol} />
-                    {/* <VolumeChart data={data.priceData || []} /> */}
-
                 </section>
-                <StockFundamentals symbol={symbol} />
+
+                
             </main>
         </div>
     );
